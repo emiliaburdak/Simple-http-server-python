@@ -15,7 +15,7 @@ def main():
 
     # send response ok
     response = "HTTP/1.1 200 OK\r\n\r\n"
-    client_socket.sendall(response)
+    client_socket.sendall(response.encode())
 
     # Closing socket
     client_socket.close()
