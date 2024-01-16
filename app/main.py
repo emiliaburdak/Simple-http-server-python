@@ -17,10 +17,13 @@ def main():
     # GET /index.html HTTP/1.1
     # Host: localhost:4221
     # User-Agent: curl/7.64.1
-    data_elements_list = request_data.split("\r\n")[0]
-    request_method, request_path, request_http_version = data_elements_list.split(" ")
+    line, header_host, header_user_agent = request_data.split("\r\n")
+
+    request_method, request_path, request_http_version = line.split(" ")
     response_body = request_path.split("/")[2:]
     response_body_str = "/".join(response_body)
+
+    user_agent = header_user_agent.split(": ")[1]
 
     if request_path == "/":
         # send response
@@ -28,6 +31,9 @@ def main():
     elif request_path.startswith("/echo"):
         # GET /echo/abc HTTP/1.1
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(response_body_str)}\r\n\r\n{response_body_str}"
+    elif request_path.startswith("/user-agent"):
+        # GET /user-agent HTTP/1.1
+        response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(user_agent)}\r\n\r\n{user_agent}"
     else:
         response = "HTTP/1.1 404 Not Found \r\n\r\n"
 
