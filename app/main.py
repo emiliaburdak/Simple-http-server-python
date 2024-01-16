@@ -17,7 +17,7 @@ def main():
     # GET /index.html HTTP/1.1
     # Host: localhost:4221
     # User-Agent: curl/7.64.1
-    line, header_host, header_user_agent = request_data.split("\r\n")
+    line, header_user_agent = request_data.split("\r\n")[0], request_data.split("\r\n")[2]
 
     request_method, request_path, request_http_version = line.split(" ")
     response_body = request_path.split("/")[2:]
