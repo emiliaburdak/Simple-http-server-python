@@ -52,19 +52,19 @@ def main():
     args = parser_object.parse_args()
 
     # Bind the socket to a specific address and port
-    with socket.create_server(("localhost", 4221), reuse_port=True) as server_socket:
-        try:
-            while True:
-                # new socket object that the server can use to communicate with the connected client, tuple with address
-                client_socket, address = server_socket.accept()
-                # for each client new thread
-                client_thread = threading.Thread(target=handle_request, args=(client_socket, args.directory))
-                # make that threads run in the background
-                client_thread.daemon = True
-                # This starts the newly created thread, allowing the server to handle multiple client connections
-                client_thread.start()
-        except KeyboardInterrupt:
-            pass
+    server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
+    while True:
+        client_socket, address = server_socket.accept()  # wait for client
+    server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
+    while True:
+        # new socket object that the server can use to communicate with the connected client, tuple with address
+        client_socket, address = server_socket.accept()
+        # for each client new thread
+        client_thread = threading.Thread(target=handle_request, args=(client_socket, args.directory))
+        # make that threads run in the background
+        client_thread.daemon = True
+        # This starts the newly created thread, allowing the server to handle multiple client connections
+        client_thread.start()
 
 
 if __name__ == "__main__":
