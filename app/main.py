@@ -42,6 +42,7 @@ def handle_request(client_socket, directory):
         response = "HTTP/1.1 404 Not Found \r\n\r\n"
 
     client_socket.sendall(response.encode())
+    client_socket.close()
 
 
 def main():
