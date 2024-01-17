@@ -29,13 +29,13 @@ def handle_request(client_socket, directory):
         user_agent = header_user_agent.split(": ")[1]
         # GET /user-agent HTTP/1.1
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(user_agent)}\r\n\r\n{user_agent}"
-    elif request_path.startswith(b"/files/"):
-        filename = request_path.split(b"/files/")[1].decode()
+    elif request_path.startswith("/files"):
+        filename = request_path.split("/files/")[1]
         file_path = os.path.join(directory, filename)
         if os.path.exists(file_path):
-            with open(file_path, "rb") as file:
+            with open(file_path) as file:
                 file_content = file.read()
-            response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n{file_content.decode()}"
+            response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n{file_content}"
         else:
             response = "HTTP/1.1 404 Not Found \r\n\r\n"
     else:
