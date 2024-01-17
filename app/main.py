@@ -16,12 +16,12 @@ def handle_request(client_socket, directory):
     line, header_user_agent = request_data.split("\r\n")[0], request_data.split("\r\n")[2]
 
     request_method, request_path, request_http_version = line.split(" ")
-    response_body = request_path.split("/")[2:]
 
     if request_path == "/":
         # send response
         response = "HTTP/1.1 200 OK\r\n\r\n"
     elif request_path.startswith("/echo"):
+        response_body = request_path.split("/")[2:]
         response_body_str = "/".join(response_body)
         # GET /echo/abc HTTP/1.1
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(response_body_str)}\r\n\r\n{response_body_str}"
@@ -30,7 +30,8 @@ def handle_request(client_socket, directory):
         # GET /user-agent HTTP/1.1
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(user_agent)}\r\n\r\n{user_agent}"
     elif request_path.startswith("/files"):
-        file_path = os.path.join(directory, response_body[0])
+        filename = request_path.split("/file/")[1]
+        file_path = os.path.join(directory, filename)
         if os.path.exists(file_path):
             with open(file_path) as file:
                 file_content = file.read()
