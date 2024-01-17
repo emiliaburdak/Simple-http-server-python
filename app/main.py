@@ -30,11 +30,11 @@ def handle_request(client_socket, directory):
         # GET /user-agent HTTP/1.1
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(user_agent)}\r\n\r\n{user_agent}"
     elif request_path.startswith("/files"):
-        file_path = os.path.join(directory, response_body)
+        file_path = os.path.join(directory, response_body[-1])
         if os.path.exists(file_path):
-            with open(file_path) as file:
+            with open(file_path, "rb") as file:
                 file_content = file.read()
-            response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n{file_content}"
+            response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n{file_content.decode()}"
         else:
             response = "HTTP/1.1 404 Not Found \r\n\r\n"
     else:
@@ -53,9 +53,7 @@ def main():
 
     # Bind the socket to a specific address and port
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
-    while True:
-        client_socket, address = server_socket.accept()  # wait for client
-    server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
+
     while True:
         # new socket object that the server can use to communicate with the connected client, tuple with address
         client_socket, address = server_socket.accept()
