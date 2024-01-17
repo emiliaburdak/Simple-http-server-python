@@ -1,8 +1,10 @@
 import socket
 import threading
+import argparse
+import os
 
 
-def handle_request(client_socket, address):
+def handle_request(client_socket, directory):
 
     # receive data from the client with 1024 bytes (max)
     request_data = client_socket.recv(1024).decode("utf-8")
@@ -15,18 +17,26 @@ def handle_request(client_socket, address):
 
     request_method, request_path, request_http_version = line.split(" ")
     response_body = request_path.split("/")[2:]
-    response_body_str = "/".join(response_body)
 
     if request_path == "/":
         # send response
         response = "HTTP/1.1 200 OK\r\n\r\n"
     elif request_path.startswith("/echo"):
+        response_body_str = "/".join(response_body)
         # GET /echo/abc HTTP/1.1
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(response_body_str)}\r\n\r\n{response_body_str}"
     elif request_path.startswith("/user-agent"):
         user_agent = header_user_agent.split(": ")[1]
         # GET /user-agent HTTP/1.1
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(user_agent)}\r\n\r\n{user_agent}"
+    elif request_path.startswith("/files"):
+        file_path = os.path.join(directory, response_body)
+        if os.path.exists(file_path):
+            with open(file_path) as file:
+                file_content = file.read()
+            response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n{file_content}"
+        else:
+            response = "HTTP/1.1 404 Not Found \r\n\r\n"
     else:
         response = "HTTP/1.1 404 Not Found \r\n\r\n"
 
@@ -34,7 +44,11 @@ def handle_request(client_socket, address):
 
 
 def main():
-    print("Logs from your program will appear here!")
+    parser_object = argparse.ArgumentParser()
+    # specifying arguments that the program can accept
+    parser_object.add_argument("--directory", type=str, default=".")
+    # parse the arguments
+    args = parser_object.parse_args()
 
     # Bind the socket to a specific address and port
     with socket.create_server(("localhost", 4221), reuse_port=True) as server_socket:
@@ -43,7 +57,7 @@ def main():
                 # new socket object that the server can use to communicate with the connected client, tuple with address
                 client_socket, address = server_socket.accept()
                 # for each client new thread
-                client_thread = threading.Thread(target=handle_request, args=(client_socket, address))
+                client_thread = threading.Thread(target=handle_request, args=(client_socket, args.directory))
                 # make that threads run in the background
                 client_thread.daemon = True
                 # This starts the newly created thread, allowing the server to handle multiple client connections
