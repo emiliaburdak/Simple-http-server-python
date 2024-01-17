@@ -30,7 +30,7 @@ def handle_request(client_socket, directory):
         # GET /user-agent HTTP/1.1
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(user_agent)}\r\n\r\n{user_agent}"
     elif request_path.startswith("/files"):
-        file_path = os.path.join(directory, response_body)
+        file_path = os.path.join(directory, response_body[0])
         if os.path.exists(file_path):
             with open(file_path) as file:
                 file_content = file.read()
