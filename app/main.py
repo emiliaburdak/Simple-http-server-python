@@ -41,7 +41,7 @@ def handle_request(client_socket, directory):
         file_path = os.path.join(directory, response_body[-1])
         file_content = body.strip()
         with open(file_path, "wb") as file:
-            file.write(file_content)
+            file.write(file_content.encode())
         response = "HTTP/1.1 201 Created\r\n\r\n"
     else:
         response = "HTTP/1.1 404 Not Found \r\n\r\n"
