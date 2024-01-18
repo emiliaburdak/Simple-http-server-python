@@ -13,7 +13,7 @@ def handle_request(client_socket, directory):
     # GET /index.html HTTP/1.1
     # Host: localhost:4221
     # User-Agent: curl/7.64.1
-    line, header_user_agent = request_data.split("\r\n")[0], request_data.split("\r\n")[2]
+    line, header_user_agent, body = request_data.split("\r\n")[0], request_data.split("\r\n")[2], request_data.split("\r\n\r\n")[1]
 
     request_method, request_path, request_http_version = line.split(" ")
     response_body = request_path.split("/")[2:]
@@ -29,7 +29,7 @@ def handle_request(client_socket, directory):
         user_agent = header_user_agent.split(": ")[1]
         # GET /user-agent HTTP/1.1
         response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(user_agent)}\r\n\r\n{user_agent}"
-    elif request_path.startswith("/files"):
+    elif request_method == "GET" and request_path.startswith("/files"):
         file_path = os.path.join(directory, response_body[-1])
         if os.path.exists(file_path):
             with open(file_path, "rb") as file:
@@ -37,6 +37,12 @@ def handle_request(client_socket, directory):
             response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n{file_content.decode()}"
         else:
             response = "HTTP/1.1 404 Not Found \r\n\r\n"
+    elif request_method == "POST" and request_path.startswith("/files"):
+        file_path = os.path.join(directory, response_body[-1])
+        file_content = body.strip()
+        with open(file_path, "wb") as file:
+            file.write(file_content)
+        response = "HTTP/1.1 201 Created\r\n\r\n"
     else:
         response = "HTTP/1.1 404 Not Found \r\n\r\n"
 
