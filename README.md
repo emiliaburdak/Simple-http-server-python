@@ -1,38 +1,14 @@
-[![progress-banner](https://backend.codecrafters.io/progress/http-server/6f96755e-bf9d-4f07-b412-bead89ab3186)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# Specification Pattern (car showroom)
+Car Showroom Management System using Specification Design Pattern in Python
 
-This is a starting point for Python solutions to the
-["Build Your Own HTTP server" Challenge](https://app.codecrafters.io/courses/http-server/overview).
+## Overview
+This repository contains a small Python implementation of the Specification Design Pattern, applied to a car showroom management system. The code is designed to provide a flexible and efficient way to filter and manage a collection of cars based on various criteria such as brand, model, year, and mileage.
 
-[HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) is the
-protocol that powers the web. In this challenge, you'll build a HTTP/1.1 server
-that is capable of serving multiple clients.
+## Features
+- Specification Pattern Implementation: Utilizes the Specification Design Pattern for filtering cars, allowing for easy addition of new specifications.
+- Car Types with Polymorphism: Defines different types of cars (ElectricCar, GasCar, PetrolCar) using polymorphism, inheriting from an abstract CarType class.
+- Extensible Car Specifications: Includes various specifications like BrandSpecification, ModelSpecification, YearSpecification, and MilageSpecification, which can be combined using logical operations.
+- Car Showroom Management: The CarShowroom class serves as a management entity for storing and querying cars using the defined specifications.
 
-Along the way you'll learn about TCP servers,
-[HTTP request syntax](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html),
-and more.
-
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
-
-# Passing the first stage
-
-The entry point for your HTTP server implementation is in `app/main.py`. Study
-and uncomment the relevant code, and push your changes to pass the first stage:
-
-```sh
-git add .
-git commit -m "pass 1st stage" # any msg
-git push origin master
-```
-
-Time to move on to the next stage!
-
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `python (3.11)` installed locally
-1. Run `./your_server.sh` to run your program, which is implemented in
-   `app/main.py`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+## Usage
+The Specification Design Pattern is an excellent choice for scenarios where objects need to be selected based on some criteria, and these criteria may be combined by logical operations. It offers a clear separation of selection criteria from the objects being selected, leading to more maintainable and scalable code.
